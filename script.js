@@ -1,30 +1,13 @@
 'use strict';
 
-// Creating element variables
 const toDoForm = document.getElementById('toDoForm');
 const toDoNameInput = document.getElementById('toDoName');
 const descriptionInput = document.getElementById('description');
-const toDoList = document.getElementById('toDoList');
 
-const link = 'https://crudcrud.com/api/a486394b3d7f4731abd853dcffe34050/addToList';
+const link = 'https://crudcrud.com/api/29f7b67b5e764ad09af289c890462bd1/addToList';
 
-// Load initial data when the page is loaded
-window.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const response = await axios.get(link);
-    response.data.forEach((toDo) => {
-      // Load initial data here
-      displayToDoItem(toDo);
-    });
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// Add an event listener to the form for form submission
 toDoForm.addEventListener('submit', addToDo);
 
-// Function to handle form submission
 async function addToDo(event) {
   event.preventDefault();
 
@@ -49,18 +32,16 @@ async function addToDo(event) {
     console.error(error);
   }
 
-  // Clear form inputs
   toDoNameInput.value = '';
   descriptionInput.value = '';
 }
 
-// Function to display a To-Do item
 function displayToDoItem(toDo) {
   const li = document.createElement('li');
   li.innerHTML = `<strong>${toDo.toDoName}</strong>: ${toDo.description}`;
 
   const crossButton = document.createElement('button');
-  crossButton.innerHTML = '&#10006;'; // X character
+  crossButton.innerHTML = '&#10006;';
   crossButton.classList.add('cross-button');
 
   crossButton.addEventListener('click', async () => {
@@ -73,21 +54,34 @@ function displayToDoItem(toDo) {
   });
 
   const tickButton = document.createElement('button');
-  tickButton.innerHTML = '&#10004;'; 
+  tickButton.innerHTML = '&#10004;';
   tickButton.classList.add('tick-button');
 
   tickButton.addEventListener('click', () => {
-    moveToDoItemToBottom(li);
+    moveToDoItemToDone(toDo, li);
   });
 
   li.appendChild(tickButton);
   li.appendChild(crossButton);
-  toDoList.appendChild(li);
+  document.getElementById('toDoList').appendChild(li);
 }
 
-// Function to move a completed To-Do item to the bottom of the list
-function moveToDoItemToBottom(item) {
+function moveToDoItemToDone(toDo, item) {
+    const newDoneItem = document.createElement('li');
+    newDoneItem.textContent = `${toDo.toDoName}: ${toDo.description}`;
+  
     item.remove();
-    toDoList.appendChild(item);
+    document.getElementById('tododone').appendChild(newDoneItem);
   }
   
+
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const response = await axios.get(link);
+    response.data.forEach((toDo) => {
+      displayToDoItem(toDo);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
